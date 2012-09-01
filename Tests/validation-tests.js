@@ -896,6 +896,70 @@ test('Nested Grouping works - Not Observable', function () {
     equals(errors().length, 3, 'Grouping correctly finds 3 invalid properties');
 });
 
+test('Nested grouping finds items in observableArrays - observable', function () {
+    var vm = { array: ko.observableArray( [ { one: ko.observable().extend( { required: true } ) } ]) };
+    
+    var errors = ko.validation.group(vm, { deep: true, observable: true });
+    
+    equals(errors().length, 1, 'Grouping finds property on object in observableArray');
+});
+
+test('Nested grouping does not add newly items newly inserted into observableArrays to result - observable, not live', function () {
+    var vm = { array: ko.observableArray() };
+    
+    var errors = ko.validation.group(vm, { deep: true, observable: true, live: false }); 
+
+    vm.array.push( { one:  ko.observable().extend( { required: true } ) });
+    
+    equals(errors().length, 0, 'grouping does not add newly items newly inserted into observableArrays to result');
+});
+
+test('Nested grouping adds items newly inserted into observableArrays to result - observable, live', function () {
+    var vm = { array: ko.observableArray() };
+    
+    var errors = ko.validation.group(vm, { deep: true, observable: true, live: true });
+
+    vm.array.push( { one:  ko.observable().extend( { required: true } ) });
+    
+    equals(errors().length, 1, 'grouping adds newly items newly inserted into observableArrays to result');
+});
+
+test('Nested grouping ignores items nested in destroyed objects - not observable', function () {
+    var obj = { nested: ko.observable().extend({ required: true }) };
+
+    function getErrorCount() {
+        return errorsFn = ko.validation.group(obj, { deep: true, observable: false, live: false })().length;
+    }
+
+    equal(getErrorCount(), 1, 'obj is not destroyed and should return nested\'s error');
+
+    obj._destroy = true;
+
+    equal(getErrorCount(), 0, 'obj is destroyed and nested therefore ignored');
+});
+
+test('Nested grouping ignores items nested in destroyed objects - observable, live', function () {
+    var obj = { nested: ko.observable().extend({ required: true }) };
+    var array = ko.observableArray([obj]);
+
+    var errors = ko.validation.group(array, { deep: true, observable: true, live: true });
+
+    equal(errors().length, 1, 'obj is not yet destroyed and nested therefore invalid');
+    array.destroy(obj);
+    equal(errors().length, 0, 'obj is destroyed and nested therefore ignored');
+});
+
+test('Nested grouping adds items newly inserted into observableArrays to result - cleares validatables before traversing again - observable, live', function () {
+    var vm = { array: ko.observableArray() };
+
+    var errors = ko.validation.group(vm, { deep: true, observable: true, live: true });
+
+    vm.array.push({ one: ko.observable().extend({ required: true }) });
+    vm.array.push({ one: ko.observable().extend({ required: true }) });
+
+    equals(errors().length, 2, 'validatables are added only once');
+});
+
 test('Issue #31 - Recursively Show All Messages', function () {
     var vm = {
         one: ko.observable().extend({ required: true }),

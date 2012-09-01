@@ -39,6 +39,7 @@
         grouping: {
             deep: false,            //by default grouping is shallow
             observable: true,       //and using observables
+            live: false,          //react to changes to observableArrays if observable === true
             errorDetails: false     //insert plain error messages
         }
     };
@@ -136,6 +137,10 @@
                 if (val === "") {
                     return true;
                 }
+            },
+            //created issue to solve that in ko https://github.com/SteveSanderson/knockout/issues/619
+            isObservableArray: function (obj) {
+                return ko.isObservable(obj) && !(obj.destroyAll === undefined);
             }
         };
     } ());
@@ -210,7 +215,8 @@
                     }
 
                     //get list of values either from array or object but ignore non-objects
-                    if (val) {
+                    // and destroyed objects
+                    if (val && !val._destroy) {
                         if (utils.isArray(val)) {
                             objValues = val;
                         } else if (utils.isObject(val)) {
@@ -232,6 +238,17 @@
                 if (options.observable) {
 
                     traverse(obj);
+
+                    if (options.live) {
+                        ko.utils.arrayForEach(validatables(), function (observable) {
+                            if (utils.isObservableArray(observable)) {
+                                observable.subscribe(function () {
+                                    validatables([]); //clear validatables
+                                    traverse(obj);
+                                })
+                            }
+                        });
+                    }
 
                     result = ko.computed(function () {
                         var errors = [];
