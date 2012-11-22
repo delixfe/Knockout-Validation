@@ -1,4 +1,8 @@
 /*
+    Adapted for AZK by @delixfe
+*/
+
+/*
 ===============================================================================
     Author:     Eric M. Barnard - @ericmbarnard                                
     License:    MIT (http://opensource.org/licenses/mit-license.php)           
