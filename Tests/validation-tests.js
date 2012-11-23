@@ -1357,3 +1357,16 @@ test('group with errorDetails options works - Observable', function () {
     equals(errors()[1], vm.lastName.errorDetails, 'group with errorDetails returns list of errorDetails');
 });
 //#endregion
+
+//#region azk integration tests
+test('Nested live grouping works with errorDetails - observable, live', function () {
+    var vm = { array: ko.observableArray() };
+    var item = { one:  ko.observable().extend( { required: true } ) };
+    
+    var errors = ko.validation.group(vm, { deep: true, observable: true, live: true, errorDetails: true });
+
+    vm.array.push(item);
+    
+    equals(errors().length, 1, 'grouping adds newly items newly inserted into observableArrays to result');
+});
+//#endregion
