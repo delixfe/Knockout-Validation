@@ -46,7 +46,8 @@
             observable: true,       //and using observables
             live: false,          //react to changes to observableArrays if observable === true
             errorDetails: false,     //insert plain error messages
-            addResultToVM: true  //add errors, isValid, isAnyMessage shown to the view model (can cause problems if these properties are already used) 
+            // addResultToVM set to false, because otherwise tests will fail -> addResultToVM is needed for the integration between errorDetails and observable array handling
+            addResultToVM: false  //add errors, isValid, isAnyMessage shown to the view model (can cause problems if these properties are already used) 
         }
     };
 
