@@ -311,7 +311,7 @@
                     return invalidAndModifiedPresent;
                 };
 
-                if(options.addResultToVM) {
+                if (options.addResultToVM) {
                     obj.errors = result;
                     obj.isValid = result.isValid;
                     obj.isAnyMessageShown = result.isAnyMessageShown;
