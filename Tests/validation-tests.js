@@ -1408,4 +1408,20 @@ test('Nested live grouping works with errorDetails - observable, live', function
     
     equals(errors().length, 1, 'grouping adds newly items newly inserted into observableArrays to result');
 });
+
+test('Adding to an observable array does not cause the reavaluation for every computed of errors for every observable', function () {
+    var vm = { array: ko.observableArray() };
+    var item = { one:  ko.observable().extend( { required: true } ) };
+    
+    var errors = ko.validation.group(vm, { deep: true, observable: true, errorDetails: true, live: true, addResultToVM: false });
+    
+    var computedHitCount = 0;
+    var computed = ko.computed(function () {
+        computedHitCount++;
+        errors();
+    });
+
+    vm.array.push(item);
+    equals(computedHitCount, 2, ' first on while creating the computed, second one for adding the item');
+});
 //#endregion
