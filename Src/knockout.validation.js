@@ -201,6 +201,7 @@
             group: function group(obj, options) { // array of observables or viewModel
                 var options = ko.utils.extend(ko.utils.extend({} ,configuration.grouping), options),
                 validatables = ko.observableArray([]),
+                validatablesTemp = [],
                 result = null,
 
                 //anonymous, immediate function to traverse objects hierarchically
@@ -217,7 +218,7 @@
 
                         //make sure it is validatable object
                         if (!obj.isValid) obj.extend({ validatable: true });
-                        validatables.push(obj);
+                        validatablesTemp.push(obj);
                     }
 
                     //get list of values either from array or object but ignore non-objects
@@ -244,13 +245,15 @@
                 if (options.observable) {
 
                     traverse(obj);
+                    validatables(validatablesTemp);
 
                     if (options.live) {
                         ko.utils.arrayForEach(validatables(), function (observable) {
                             if (utils.isObservableArray(observable)) {
                                 observable.subscribe(function () {
-                                    validatables([]); //clear validatables
+                                    validatablesTemp = [];
                                     traverse(obj);
+                                    validatables(validatablesTemp);
                                 });
                             }
                         });
@@ -269,9 +272,9 @@
                 } else { //if not using observables then every call to error() should traverse the structure
                     result = function () {
                         var errors = [];
-                        validatables([]); //clear validatables
+                        validatablesTemp = []; //clear validatables
                         traverse(obj); // and traverse tree again
-                        ko.utils.arrayForEach(validatables(), function (observable) {
+                        ko.utils.arrayForEach(validatablesTemp, function (observable) {
                             if (!observable.isValid()) {
                                 errors.push(options.errorDetails && configuration.enableErrorDetails ? observable.errorDetails : observable.error);
                             }
@@ -289,7 +292,7 @@
                     // ensure we have latest changes
                     result();
 
-                    ko.utils.arrayForEach(validatables(), function (observable) {
+                    ko.utils.arrayForEach(validatablesTemp, function (observable) {
                         observable.isModified(show);
                     });
                 };
