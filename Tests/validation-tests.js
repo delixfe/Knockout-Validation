@@ -1477,7 +1477,7 @@ test('Adding a complex object to an observable array works', function () {
     }
 
     var errors = ko.validation.group(vm, { deep: true, observable: true, errorDetails: true, live: true, addResultToVM: false });
-    self.errorsWithIndex = ko.computed(function () {
+    var errorsWithIndex = ko.computed(function () {
             var index = 1, result = [];
             ko.utils.arrayForEach(errors(), function (error) {
                 if (error.observable.errorDetails.index === undefined) {
