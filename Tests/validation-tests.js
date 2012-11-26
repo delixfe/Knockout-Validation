@@ -1480,12 +1480,9 @@ test('Adding a complex object to an observable array works', function () {
     var errorsWithIndex = ko.computed(function () {
             var index = 1, result = [];
             ko.utils.arrayForEach(errors(), function (error) {
-                if (error.observable.errorDetails.index === undefined) {
-                    error.observable.errorDetails.index = ko.observable(null);
-                }
                 // ignore not modified ones
                 if (error.observable.isModified()) {
-                    error.observable.errorDetails.index(index++);
+                    error.observable.errorIndex(index++);
                     result.push(error);
                 }
             });
