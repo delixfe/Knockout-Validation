@@ -1465,4 +1465,42 @@ test('Adding to an observable array does not cause the reavaluation for every co
     equals(computedHitCount, 2, ' first on while creating the computed, second one for adding the item');
     ko.validation.reset();
 });
+
+test('Adding a complex object to an observable array works', function () {
+    
+    ko.validation.init( { enableErrorDetails: true }, true);    
+    var vm = { array: ko.observableArray() };
+
+    var Item = function () {
+        var self = this;
+        self.name = ko.observable().extend( { required: true } );
+    }
+
+    var errors = ko.validation.group(vm, { deep: true, observable: true, errorDetails: true, live: true, addResultToVM: false });
+    self.errorsWithIndex = ko.computed(function () {
+            var index = 1, result = [];
+            ko.utils.arrayForEach(errors(), function (error) {
+                if (error.observable.errorDetails.index === undefined) {
+                    error.observable.errorDetails.index = ko.observable(null);
+                }
+                // ignore not modified ones
+                if (error.observable.isModified()) {
+                    error.observable.errorDetails.index(index++);
+                    result.push(error);
+                }
+            });
+            return result;
+        });
+    equals(errors().length, 0);
+    equals(errorsWithIndex().length, 0);
+    var item = new Item();
+    vm.array.push(item);
+    equals(errors().length, 1);
+    equals(errorsWithIndex().length, 0);
+    item.name('abc');
+    item.name(null);
+    equals(errors().length, 1);
+    equals(errorsWithIndex().length, 1);
+    ko.validation.reset();
+});
 //#endregion
