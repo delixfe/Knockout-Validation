@@ -1500,4 +1500,18 @@ test('Adding a complex object to an observable array works', function () {
     equals(errorsWithIndex().length, 1);
     ko.validation.reset();
 });
+
+test('Going from one invalid state to the next creates the correct errorDetails (required -> maxLength)', function () {
+    ko.validation.init( { enableErrorDetails: true }, true);    
+    var vm = { item : ko.observable().extend( { maxLength: 2, required: true } ) };
+    var errors = ko.validation.group(vm, { deep: true, observable: true, errorDetails: true, live: true, addResultToVM: false });
+
+    equals(errors().length, 1);
+    equals(errors()[0].rule.message, ko.validation.rules.required.message);
+
+    // insert to long text
+    vm.item('12345');
+    equals(errors()[0].rule.message, "Please enter no more than 2 characters.");    
+    ko.validation.reset();    
+});
 //#endregion
