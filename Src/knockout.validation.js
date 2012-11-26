@@ -901,6 +901,9 @@
 
             observable.isModified = ko.observable(false);
 
+            // to store the index for list
+            observable.errorIndex = ko.observable();
+
             // we use a computed here to ensure that anytime a dependency changes, the
             // validation logic evaluates
             var h_obsValidationTrigger = ko.computed(function () {
@@ -939,6 +942,7 @@
                 delete observable['__valid__'];
                 delete observable['isModified'];
                 if(configuration.enableErrorDetails) delete observable['errorDetails'];
+                delete observable['errorIndex'];
             };
         } else if (enable === false && utils.isValidatable(observable)) {
 
