@@ -1509,7 +1509,7 @@ test('Going from one invalid state to the next creates the correct errorDetails 
     equals(errors().length, 1);
     equals(errors()[0].rule.message, ko.validation.rules.required.message);
 
-    // insert to long text
+    // insert too long text triggering maxLength rule
     vm.item('12345');
     equals(errors()[0].rule.message, "Please enter no more than 2 characters.");    
     ko.validation.reset();    
