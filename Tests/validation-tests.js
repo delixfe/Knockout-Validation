@@ -1573,11 +1573,11 @@ test('Going from one invalid state to the next creates the correct errorDetails 
     var errors = ko.validation.group(vm, { deep: true, observable: true, errorDetails: true, live: true, addResultToVM: false });
 
     equals(errors().length, 1);
-    equals(errors()[0].rule.message, ko.validation.rules.required.message);
+    equals(errors()[0].rule().message, ko.validation.rules.required.message);
 
     // insert too long text triggering maxLength rule
     vm.item('12345');
-    equals(errors()[0].rule.message, "Please enter no more than 2 characters.");    
+    equals(errors()[0].rule().message, "Please enter no more than {0} characters.");    
     ko.validation.reset();    
 });
 //#endregion
