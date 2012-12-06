@@ -1595,7 +1595,7 @@ test('Going from one invalid state to the next creates the correct errorDetails 
     ko.validation.reset();    
 });
 
-test('grouping ignores observables extended with ignoreValidation', function () {
+test('grouping ignores observables extended with ignoreInValidationGroup', function () {
     var Item = function () {
         var self = this;
         self.required = ko.observable().extend({ required: true });
@@ -1604,7 +1604,7 @@ test('grouping ignores observables extended with ignoreValidation', function () 
     var ViewModel = function () {
         var self = this;
         self.item1 = new Item();
-        self.allItems = ko.observableArray([ self.item1 ]).extend({ validatable: false });
+        self.allItems = ko.observableArray([ self.item1 ]).extend({ ignoreInValidationGroup: true });
     };
     var vm = new ViewModel();    
 
