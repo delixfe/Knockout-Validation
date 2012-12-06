@@ -1158,6 +1158,18 @@ test('Grouping options does not overwrite global configuration options', functio
 
     equals(errors().length, 1, 'Grouping finds one invalid object because deep option was not specified.');
 });
+
+test('grouping ignores observables extended with ignoreInValidationGroup', function () {
+    var vm = {};
+    vm.firstName = ko.observable().extend({ required: true });
+    vm.lastName = ko.observable().extend({ required: 2 });
+    vm.allProperties = ko.observableArray([vm.firstName, vm.lastName]).extend({ ignoreInValidationGroup: true });
+
+    var errors = ko.validation.group(vm, { deep: true, observable: true });
+
+    equals(errors().length, 2, 'Grouping correctly finds only 2 invalid properties');
+});
+
 //#endregion
 
 //#region Conditional Validation
