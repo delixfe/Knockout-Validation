@@ -1501,6 +1501,8 @@ test('going from one invalid state to the next creates the correct errorDetails 
 //#endregion
 
 //#region azk integration tests
+module('azk integration tests');
+
 test('Nested live grouping works with errorDetails - observable, live', function () {
     ko.validation.init( { enableErrorDetails: true }, true);
     var vm = { array: ko.observableArray() };
@@ -1580,4 +1582,5 @@ test('Going from one invalid state to the next creates the correct errorDetails 
     equals(errors()[0].rule().message, "Please enter no more than {0} characters.");    
     ko.validation.reset();    
 });
+
 //#endregion
