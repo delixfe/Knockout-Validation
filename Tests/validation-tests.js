@@ -1583,4 +1583,21 @@ test('Going from one invalid state to the next creates the correct errorDetails 
     ko.validation.reset();    
 });
 
+test('grouping ignores observables extended with ignoreValidation', function () {
+    var Item = function () {
+        var self = this;
+        self.required = ko.observable().extend({ required: true });
+    };
+
+    var ViewModel = function () {
+        var self = this;
+        self.item1 = new Item();
+        self.allItems = ko.observableArray([ self.item1 ]).extend({ validatable: false });
+    };
+    var vm = new ViewModel();    
+
+    var errors = ko.validation.group(vm, { deep: true, observable: true, errorDetails: true, live: true, addResultToVM: false });
+
+    equals(errors().length, 1, 'Grouping correctly finds only 1 invalid properties');
+});
 //#endregion
