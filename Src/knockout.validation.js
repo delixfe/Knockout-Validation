@@ -283,6 +283,8 @@
                         return errors;
                     });
 
+                    result.retraverse = traverseAndStoreInValidatables;
+
                 } else { //if not using observables then every call to error() should traverse the structure
                     result = function () {
                         var errors = [];
