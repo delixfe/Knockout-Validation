@@ -285,6 +285,7 @@
 
                     traverseAndStoreInValidatables();
                     
+                    // TODO: call clearObservableArraySubscriptions on dispose of result -> but ko.computed has no disposeCallback
                     result = ko.computed(function () {
                         var errors = [];
                         ko.utils.arrayForEach(validatables(), function (observable) {
@@ -294,6 +295,8 @@
                         });
                         return errors;
                     });
+
+                    result.retraverse = traverseAndStoreInValidatables;
 
                 } else { //if not using observables then every call to error() should traverse the structure
                     result = function () {
