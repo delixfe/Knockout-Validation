@@ -1058,6 +1058,21 @@ test('Nested grouping adds items newly inserted into observableArrays to result 
     equals(errors().length, 2, 'validatables are added only once');
 });
 
+test('Retraverse all objects', function () {
+    var vm = { prop: ko.observable()};
+    var errors = ko.validation.group(vm, { deep: true, observable: true, live: true });
+    
+    var complexObject = { name: ko.observable().extend({ required: true }); };
+    vm.prop(complexObject);
+
+    errors.showAllMessages();
+    equals(errors().length, 0, 'no validation error'); // complex object is not added to validation
+
+    errors.retraverse();
+
+    equals(errors().length, 1, 'validatables are added only once');
+});
+
 test('Issue #31 - Recursively Show All Messages', function () {
     var vm = {
         one: ko.observable().extend({ required: true }),
