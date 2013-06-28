@@ -1062,7 +1062,7 @@ test('Retraverse all objects', function () {
     var vm = { prop: ko.observable()};
     var errors = ko.validation.group(vm, { deep: true, observable: true, live: true });
     
-    var complexObject = { name: ko.observable().extend({ required: true }); };
+    var complexObject = { name: ko.observable().extend({ required: true }) };
     vm.prop(complexObject);
 
     errors.showAllMessages();
